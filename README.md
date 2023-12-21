@@ -19,7 +19,7 @@ Este repositorio contiene una landing page destinada a brindar información sobr
 ## Estructura del Proyecto
 
 El proyecto sigue la siguiente estructura:
-
+```
 |-- src/
 | |-- components/
 | | |-- Navbar.js
@@ -32,15 +32,16 @@ El proyecto sigue la siguiente estructura:
 | |-- App.js
 | |-- index.js
 |-- ...
+```
 
-El código se organiza en componentes dentro del directorio src. La carpeta components contiene los elementos reutilizables como Navbar, Card, etc. Mientras que pages almacena las distintas páginas de la aplicación, como la página principal (Home) y la página de detalles del juego (GameDetails).
+El código se organiza en componentes dentro del directorio `src`. La carpeta `components` contiene los elementos reutilizables como Navbar, Card, etc. Mientras que `pages` almacena las distintas páginas de la aplicación, como la página principal (`Home`) y la página de detalles del juego (`GameDetails`).
 
 ## Uso del Repositorio
 Para comenzar a trabajar en este proyecto:
 
 Clona este repositorio en tu entorno de desarrollo local.
 Utiliza CodeSpaces si es posible para iniciar un ambiente de desarrollo en la nube.
-Realiza cambios en los archivos dentro del directorio src para agregar funcionalidades o modificar la apariencia según sea necesario.
+Realiza cambios en los archivos dentro del directorio `src` para agregar funcionalidades o modificar la apariencia según sea necesario.
 Asegúrate de seguir las mejores prácticas de desarrollo y de versionamiento.
 
 ## Contribuciones
