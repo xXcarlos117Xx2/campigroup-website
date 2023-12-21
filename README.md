@@ -20,17 +20,23 @@ Este repositorio contiene una landing page destinada a brindar información sobr
 
 El proyecto sigue la siguiente estructura:
 ```
+|-- public/
+| |-- index.html/
 |-- src/
 | |-- img/
 | |-- js/
+| | |-- components/
+| | | |-- navbar/
+| | | | |-- Navbar.jsx
+| | | | |-- Navbar.css
+| | | | |-- ...
+| | | |-- card/
+| | | | |-- Card.jsx
+| | | | |-- Card.css
+| | | | |-- ...
+| | | |-- Homepage.jsx
+| | | |-- Homepage.css
 | | |-- index.js
-| | |-- ...
-| |-- components/
-| | |-- Navbar.jsx
-| | |-- Card.jsx
-| | |-- ...
-| |-- styles/
-| | |-- style.css
 | | |-- ...
 | |-- ...
 |-- ...
