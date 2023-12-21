@@ -21,16 +21,18 @@ Este repositorio contiene una landing page destinada a brindar información sobr
 El proyecto sigue la siguiente estructura:
 ```
 |-- src/
+| |-- img/
+| |-- js/
+| | |-- index.js
+| | |-- ...
 | |-- components/
-| | |-- Navbar.js
-| | |-- Card.js
+| | |-- Navbar.jsx
+| | |-- Card.jsx
 | | |-- ...
-| |-- pages/
-| | |-- Home.js
-| | |-- GameDetails.js
+| |-- styles/
+| | |-- style.css
 | | |-- ...
-| |-- App.js
-| |-- index.js
+| |-- ...
 |-- ...
 ```
 
