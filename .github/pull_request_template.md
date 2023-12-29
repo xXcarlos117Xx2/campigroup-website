@@ -1,4 +1,4 @@
-## Pull Request de [rama] a [rama]:
+## Pull Request: *rama* -> *rama*:
 
 [Descripción]
 
