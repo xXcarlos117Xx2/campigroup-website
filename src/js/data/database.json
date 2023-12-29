@@ -1,0 +1,43 @@
+{
+  "Campigroup Games": [
+    {
+      "title": "MinecraftVR",
+      "label": "Ver infomación",
+      "description": "Explora el mundo de Minecraft como nunca antes lo habías experimentado. Sumérgete en una aventura en 3D con la magia de la realidad virtual mientras construyes, exploras y te sumerges en un universo pixelado de creatividad y emoción.",
+      "image": "https://placehold.co/600x400"
+    },
+    {
+      "title": "FivePD",
+      "label": "Ver infomación",
+      "description": "Únete a las fuerzas del orden en un emocionante servidor de GTA. Ponte en la piel de un policía en un vasto mundo virtual, lucha contra el crimen, patrulla las calles y haz cumplir la ley en un entorno repleto de acción, desafíos y decisiones impactantes.",
+      "image": "https://placehold.co/600x400"
+    },
+    {
+      "title": "ArmA3",
+      "label": "Ver infomación",
+      "description": "Adéntrate en un entorno semisimulado en ArmA3. Experimenta la intensidad de un combate táctico, la estrategia y la cooperación en un escenario realista. Sumérgete en misiones desafiantes que requieren trabajo en equipo y habilidades estratégicas para el éxito.",
+      "image": "https://placehold.co/600x400"
+    },
+    {
+      "title": "MinecraftVR",
+      "label": "Ver infomación",
+      "description": "Explora el mundo de Minecraft como nunca antes lo habías experimentado. Sumérgete en una aventura en 3D con la magia de la realidad virtual mientras construyes, exploras y te sumerges en un universo pixelado de creatividad y emoción.",
+      "image": "https://placehold.co/600x400"
+    },
+    {
+      "title": "FivePD",
+      "label": "Ver infomación",
+      "description": "Únete a las fuerzas del orden en un emocionante servidor de GTA. Ponte en la piel de un policía en un vasto mundo virtual, lucha contra el crimen, patrulla las calles y haz cumplir la ley en un entorno repleto de acción, desafíos y decisiones impactantes.",
+      "image": "https://placehold.co/600x400"
+    }
+  ],
+
+  "Minequest Games": [
+    {
+      "title": "Minequest",
+      "label": "Ver infomación",
+      "description": "placeholder",
+      "image": "https://placehold.co/600x400"
+    }
+  ]
+}
