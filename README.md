@@ -33,4 +33,4 @@ o ejecuta un codespace directamente desde la rama `master`.
 
 ## LICENCIA
 
-Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENCIA.md](LICENCIA.md) para más detalles.
+Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
