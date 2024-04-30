@@ -1,0 +1,42 @@
+/* static/css/my_styles.css */
+.navbar {
+    position:fixed;
+    top: 0;
+    left: 0;
+    padding: 0;
+    padding-top: 13%;
+    height:100%;
+    width: 8%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Esconder la scrollbar*/
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* Esconder la scrollbar*/
+.navbar::-webkit-scrollbar {
+    display: none;
+}
+
+.navbar .navbar-brand {
+    /* Display: none; */
+    position:fixed;
+    top: 0;
+    left: 8%;
+}
+
+.navbar .nav-link {
+    width: 100%;
+}
+
+.navbar .navbar-nav {
+    flex-direction: column;
+}
+
+.container {
+    position:absolute;
+    top: 10%;
+    left: 8%;
+}
+
