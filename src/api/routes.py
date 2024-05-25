@@ -11,6 +11,16 @@ CORS(api)
 
 # Funciones auxiliares
 
+def encrypt_password(password):
+    password = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    password = bcrypt.hashpw(password, salt)
+    password = password.decode('utf-8')
+    return password
+
+def get_user_id_from_username(username):
+    pass
+
 
 # Cositas que necesito
     # response_body = {}
@@ -18,21 +28,58 @@ CORS(api)
     # response_body['msg'] = "Mensaje"
     # [row.serialize() for row in variable_name]
 
-@api.route('/signup', methods=['POST'])
+# User Management
+@api.route('/signup', methods=['POST']) # Register
 def handle_signup():
 
     return response_body, 200
 
 
-@api.route('/signin', methods=['POST'])
+@api.route('/signin', methods=['POST']) # Login
 def handle_signin():
     
     return response_body, 200
 
 @api.route('/users', methods=['GET'])
 def handle_users():
-    response_body = {}
-    users = db.session.execute(db.select(Users)).scalars()
-    response_body['msg'] = "User list obtained"
-    response_body['results'] = [row.serialize() for row in users]
+
     return response_body, 200
+
+@api.route('/user/<string:username>', methods=['GET', 'PUT', 'DELETE'])
+def handle_user():
+    if request.method == 'GET':
+        return response_body, 200
+
+    if request.method == 'PUT':
+        return response_body, 200
+
+    if request.method == 'DELETE':
+        return response_body, 200
+
+@api.route('/roles', methods=['GET', 'POST'])
+def handle_roles():
+    if request.method == 'GET':
+        return response_body, 200
+
+    if request.method == 'POST':
+        return response_body, 200
+
+@api.route('/user-roles', methods=['GET', 'POST'])
+def handle_roles():
+    if request.method == 'GET':
+        return response_body, 200
+
+    if request.method == 'POST':
+        return response_body, 200
+
+@api.route('/user-roles/<string:username>', methods=['GET', 'PUT', 'DELETE'])
+def handle_user_roles():
+    if request.method == 'GET':
+        return response_body, 200
+
+    if request.method == 'PUT':
+        return response_body, 200
+
+    if request.method == 'DELETE':
+        return response_body, 200
+
