@@ -2,6 +2,14 @@
 
 Este proyecto es una web para Campigroup. La idea principal es que, de manera pública puedas ver los estados de los servidores de juegos abiertos. Tambien puedes ver la información necesaria para acceder al servidor, sea la IP, mods etc.
 
+## Como iniciar el proyecto
+1. Abrir un codespace (recomendado) o un local con sus requisitos (`requirements.txt` en la raiz del proyecto)
+2. Instalar dependencias con `npm install`
+3. Instalar dependencias con `pipenv install`
+4. Configurar el `.env` tal y como indica `.env.example`
+5. Iniciar primero el Backend `pipenv run start`
+6. Iniciar el Frontend `npm run start`
+
 ## Características
 
 - Mobile first
