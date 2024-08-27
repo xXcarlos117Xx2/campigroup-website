@@ -1,7 +1,7 @@
-from flask import Flask, request, jsonify, url_for, Blueprint, current_app as app, render_template
+from flask import Flask, redirect, request, jsonify, url_for, Blueprint, current_app as app, render_template
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import get_jwt, jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import get_jwt, jwt_required, create_access_token, create_refresh_token, get_jwt_identity
 from flask_mail import Mail, Message
 
 from api.models import db, Users, Game, Genre, GameGenre, Server, Comment, Image, Setting, UserSetting, Favorite, SocialAccount
@@ -42,11 +42,7 @@ def send_test_email():
 @api.route('/signup', methods=['POST'])
 def handle_signup():
     response_body = {}
-    safe_time = app.config['safeTime']
-    if request.method != 'POST':
-        response_body['error'] = 'Método no soportado'
-        return jsonify(response_body), 405
-    
+    safe_time = app.config['safeTime']    
     data = request.get_json()
     required_data = ['username','email','password']
     for key in required_data:
@@ -80,6 +76,7 @@ def handle_signup():
                 <p>El link expirará en 24 horas.</p>
                 '''
                )
+    
     response_body['token'] = user.activation_token
     response_body['message'] = f"Usuario registrado, correo enviado a {user.email} para activar la cuenta."
     return response_body, 200
@@ -114,10 +111,7 @@ def activate_account(token):
             <p>El nuevo enlace expirará en 24 horas.</p>
             '''
         )
-
-        response_body['error'] = str(e)
-        response_body['token_provided'] = token
-        response_body['token in db'] = user.activation_token
+        response_body['token'] = user.activation_token
         response_body['message'] = 'El token es inválido o ha expirado. Se ha enviado un nuevo token de activación a tu correo electrónico.'
         return response_body, 400
     
@@ -126,3 +120,161 @@ def activate_account(token):
     db.session.commit()
     response_body['message'] = 'Cuenta activada con éxito'
     return response_body, 200
+
+@api.route('/check-pwd', methods=['POST'])
+@jwt_required()
+def check_password():
+    response_body = {}  
+    current_user = get_jwt_identity()
+    data = request.get_json()
+    required_data = ['password']
+    for key in required_data:
+        if key not in data:
+            response_body['message'] = f"Falta {key} en el body"
+            return response_body, 400
+
+    user = Users.find_by_email(current_user['email'])
+    if not user or not bcrypt.check_password_hash(user.password, data.get('password')):
+        response_body['message'] = "Contraseña incorrecta"
+        return response_body, 401
+
+    response_body['message'] = "Contraseña correcta"
+    return response_body, 200
+
+@api.route('/forgot-pwd', methods=['POST'])
+def forgot_password():
+    response_body = {}  
+    data = request.get_json()
+    required_data = ['email']
+    for key in required_data:
+        if key not in data:
+            response_body['message'] = f"Falta {key} en el body"
+            return response_body, 400
+
+    user = Users.find_by_email(data.get('email'))
+    if not user:
+        response_body['message'] = "No se encontró un usuario con ese correo electrónico"
+        return response_body, 404
+
+    user.reset_token = app.config['safeTime'].dumps(user.email, salt=app.config['JWT_SECRET_KEY'])
+    user.token_expiry = datetime.now(timezone('UTC')) + timedelta(hours=1)
+    db.session.commit()
+
+    send_email(
+            to=user.email,
+            subject='Reinicio de contraseña',
+            template=f'''
+            <h1>Has pedido un reinicio de tu contraseña</h1>
+            <p>Si no has pedido un reinicio de contraseña, por favor, ignora este email.</p>
+            <p>En caso contrario, haz click en el enlace para reiniciar tu contraseña:</p>
+            <a href="{url_for('api.reset_pwd', token=user.reset_token, _external=True)}">Recuperar contraseña</a>
+            <p>El enlace expirará en 1 hora.</p>
+            '''
+        )
+    response_body['token'] = user.reset_token
+    response_body['message'] = f"Correo electrónico enviado a {user.email} para reiniciar tu contraseña."
+    return response_body, 200
+
+@api.route('/reset-pwd/<token>', methods=['GET'])
+def reset_pwd(token):
+    response_body = {}  
+    safe_time = app.config['safeTime']
+    user = Users.find_by_reset_token(token)
+    if not user:
+        response_body['message'] = 'El token es inválido o no se pudo encontrar al usuario.'
+        return response_body, 400
+    
+    try:
+        email = safe_time.loads(token, salt=app.config['JWT_SECRET_KEY'], max_age=3600)  # Token válido por 1 hora
+    except Exception as e: # Si el token es inválido o ha expirado
+        user.reset_token = app.config['safeTime'].dumps(user.email, salt=app.config['JWT_SECRET_KEY'])
+        user.token_expiry = datetime.now(timezone('UTC')) + timedelta(hours=1)
+        db.session.commit()
+
+        send_email(
+            to=user.email,
+            subject='Nuevo token de reinicio de contraseña',
+            template=f'''
+            <h1>Tu token de reinicio de contraseña ha expirado</h1>
+            <p>Tu token de reinicio de contraseña ha expirado. Por favor, haz clic en el siguiente enlace para reiniciar tu contraseña:</p>
+            <a href="{url_for('api.reset_pwd', token=user.reset_token, _external=True)}">Recuperar contraseña</a>
+            <p>El nuevo enlace expirará en 1 hora.</p>
+            '''
+        )
+        response_body['token'] = user.reset_token
+        response_body['message'] = 'El token ha expirado. Se ha enviado un nuevo token a tu correo electrónico.'
+        return jsonify(response_body), 400
+    
+    return redirect(f"{app.config['FRONTEND_URL']}/reset-password?token={token}")
+
+@api.route('/update-pwd', methods=['POST'])
+def update_password():
+    response_body = {}
+    safe_time = app.config['safeTime']
+    data = request.get_json()
+    token = data.get('token')
+    new_password = str(data.get('password'))
+    confirm_password = str(data.get('confirmPassword'))
+
+    if new_password != confirm_password:
+        response_body['message'] = 'Las contraseñas no coinciden.'
+        return response_body, 400
+  
+    user = Users.find_by_reset_token(token)
+    if not user:
+        response_body['message'] = 'El token es inválido o no se pudo encontrar al usuario.'
+        return response_body, 400
+
+    try:
+        email = safe_time.loads(token, salt=app.config['JWT_SECRET_KEY'], max_age=3600)  # Token válido por 1 hora
+    except Exception as e:  # Si el token es inválido o ha expirado
+        response_body['message'] = 'El token es inválido o ha expirado.'
+        return response_body, 400
+
+    user.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+    user.reset_token = None
+    user.token_expiry = None
+    db.session.commit()
+
+    response_body['message'] = 'Contraseña actualizada con éxito.'
+    return response_body, 200
+
+@api.route('/login', methods=['POST'])
+def login():
+    response_body = {}
+    data = request.get_json()
+    username = data.get('username', None)
+    email = data.get('email', None).lower()
+    if not email and not username:
+        response_body['message'] = f"Falta un username o un email en el body"
+        return response_body, 400
+    
+    password = data.get('password', None)
+    if not password:
+        response_body['message'] = "Falta password en el body"
+        return response_body, 400
+    
+    if email:
+        user = Users.find_by_email(email)
+    if username:
+        user = Users.find_by_username(username)
+
+    if not user:
+        response_body['message'] = "Usuario no registrado."
+        return response_body, 404
+    
+    if not user.is_active:
+        response_body['message'] = "Cuenta inactiva."
+        return response_body, 403
+
+    if bcrypt.check_password_hash(user.password, str(data.get('password'))):
+        response_body['message'] = "Inicio de sesión exitoso."
+        response_body['access_token'] = create_access_token(identity=user.serialize(), expires_delta=timedelta(hours=1))
+        response_body['refresh_token'] = create_refresh_token(identity=user.serialize())
+        response_body['results'] = user.serialize()
+        
+        return response_body, 200
+    
+    response_body['message'] = "Contraseña incorrecta."
+    return response_body, 401
+

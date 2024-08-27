@@ -57,6 +57,10 @@ mail = Mail(app)
 # Configuración del serializer
 app.config['safeTime'] = URLSafeTimedSerializer(app.config['JWT_SECRET_KEY'])
 
+# Configuración de Frontend y Backend URLs
+app.config['FRONTEND_URL'] = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+app.config['BACKEND_URL'] = os.getenv('BACKEND_URL', 'http://localhost:3001')
+
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
