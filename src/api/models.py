@@ -15,6 +15,7 @@ class Users(db.Model):
     role = db.Column(db.Enum('user', 'admin', name='role'), nullable=False, default='user')
     activation_token = db.Column(db.String(200), nullable=True)
     token_expiry = db.Column(db.DateTime, nullable=True)
+    reset_token = db.Column(db.String(200), nullable=True)
 
     # Relationships
     favorites = db.relationship('Favorite', back_populates='user', lazy='dynamic')
@@ -48,6 +49,10 @@ class Users(db.Model):
     @classmethod
     def find_by_activation_token(cls, activation_token):
         return cls.query.filter_by(activation_token=activation_token).first()
+
+    @classmethod
+    def find_by_reset_token(cls, reset_token):
+        return cls.query.filter_by(reset_token=reset_token).first()
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
