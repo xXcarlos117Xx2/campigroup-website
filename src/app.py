@@ -72,15 +72,14 @@ def sitemap():
         return generate_sitemap(app)
     return send_from_directory(static_file_dir, 'index.html')
 
-# Si no comento esto se ve toda la web desde el back... ¯\_(ツ)_/¯
-## Any other endpoint will try to serve it like a static file
-# @app.route('/<path:path>', methods=['GET'])
-# def serve_any_other_file(path):
-#     if not os.path.isfile(os.path.join(static_file_dir, path)):
-#         path = 'index.html'
-#     response = send_from_directory(static_file_dir, path)
-#     response.cache_control.max_age = 0  # Avoid cache memory
-#     return response
+# Any other endpoint will try to serve it like a static file
+@app.route('/<path:path>', methods=['GET'])
+def serve_any_other_file(path):
+    if not os.path.isfile(os.path.join(static_file_dir, path)):
+        path = 'index.html'
+    response = send_from_directory(static_file_dir, path)
+    response.cache_control.max_age = 0  # Avoid cache memory
+    return response
 
 # Ejecutar la aplicación
 if __name__ == '__main__':
