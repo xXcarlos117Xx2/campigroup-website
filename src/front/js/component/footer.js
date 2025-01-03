@@ -1,33 +1,17 @@
 import React, { Component } from "react";
 
 export const Footer = () => (
-	<footer className="bg-dark text-white text-center py-4">
-		<div className="container">
-			<div className="row">
-				<div className="col-md-4 mb-3 mb-md-0">
-					<h5>About Us</h5>
-					<p>
-						lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec consequat
-					</p>
-				</div>
-				<div className="col-md-4 mb-3 mb-md-0">
-					<h5>Contact</h5>
-					<ul className="list-unstyled">
-						<li><a href="mailto:carlos117@campigroup.es" className="text-white">carlos117@campigroup.es</a></li>
-					</ul>
-				</div>
-				<div className="col-md-4">
-					<h5>Follow Us</h5>
-					<a href="#" className="text-white me-4"><i className="fab fa-facebook-f"></i></a>
-					<a href="#" className="text-white me-4"><i className="fab fa-twitter"></i></a>
-					<a href="#" className="text-white"><i className="fab fa-instagram"></i></a>
-				</div>
-			</div>
-			<div className="row mt-4">
-				<div className="col-12">
-					<p className="mb-0">&copy; 2024 Campigroup.es. All rights reserved.</p>
-				</div>
-			</div>
-		</div>
-	</footer>
+	<footer className="footer mt-auto max-vh-50 py-3 border-top bg-dark" data-bs-theme="dark">
+	<div className="container">
+	  <ul className="nav justify-content-center list-unstyled d-flex">
+		<li className="ms-3"><a className="text-body-secondary" href="http://www.twitter.com/xXcarlos117Xx2"><i className="fa-lg fab fa-twitter-square"></i></a></li>
+		<li className="ms-3"><a className="text-body-secondary" href="http://www.linkedin.com/in/xXcarlos117Xx2"><i className="fa-lg fab fa-linkedin"></i></a></li>
+		<li className="ms-3"><a className="text-body-secondary" href="http://www.github.com/xXcarlos117Xx2"><i className="fa-lg fab fa-github-square"></i></a></li>
+	  </ul>
+	  <p className="text-center text-muted mt-2">
+		<span>Campigroup© 2024<br/></span>
+		<span>Todos los derechos reservados.</span>
+	  </p>
+	</div>
+  </footer>
 );

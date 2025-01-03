@@ -83,5 +83,7 @@ def serve_any_other_file(path):
 
 # Ejecutar la aplicación
 if __name__ == '__main__':
-    PORT = int(os.environ.get('PORT', 3001))
+    PORT = int(os.environ.get('PORT', 1107))
+    print(f"Flask is running on port: {PORT}")
     app.run(host='0.0.0.0', port=PORT, debug=True)
+

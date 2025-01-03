@@ -5,7 +5,12 @@ import { Home } from "./pages/home";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
+import { Breadcrumbs } from "./component/breadcrumbs.js";
 import { Footer } from "./component/footer";
+
+//pages
+import { GameInfo } from "./pages/gameInfo";
+
 
 //create your first component
 const Layout = () => {
@@ -15,13 +20,19 @@ const Layout = () => {
 
     return (
         <div>
+            <div className="app-container" style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
             <BrowserRouter basename={basename}>
                     <Navbar />
+                    <Breadcrumbs />
+                    <div style={{ flexGrow: 1 }}>
                     <Routes>
                         <Route element={<Home />} path="/" />
+                        <Route path="/game-info/:gameId" element={<GameInfo />} />
                     </Routes>
+                    </div>
                     <Footer />
             </BrowserRouter>
+            </div>
         </div>
     );
 };

@@ -11,6 +11,11 @@ from itsdangerous import URLSafeTimedSerializer
 from datetime import datetime, timedelta
 from pytz import timezone
 
+import socket
+
+# DEBUG
+import traceback
+
 # Crear el blueprint
 api = Blueprint('api', __name__)
 CORS(api)
@@ -27,6 +32,33 @@ def send_email(to, subject, template):
         sender=app.config['MAIL_DEFAULT_SENDER']
     )
     app.extensions['mail'].send(msg)
+
+# Estado de los servidores
+@api.route('/server-status', methods=['GET'])
+def get_servers_status():
+    try:
+        servers = Server.query.all()
+        server_list = []
+
+        for server in servers:
+            # Verificamos el estado del servidor usando socket
+            try:
+                with socket.create_connection((server.ip_address, server.port), timeout=5):
+                    status = "🟢"
+            except (socket.timeout, socket.error):
+                status = "🔴"
+
+            server_list.append({
+                "game_id": server.game_id,
+                "name": server.name,
+                "ip_address": server.ip_address,
+                "port": server.port,
+                "status": status
+            })
+
+        return jsonify({"servers": server_list}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Configuración de rutas
 @api.route('/debug-send-test-email', methods=['GET'])
@@ -277,4 +309,53 @@ def login():
     
     response_body['message'] = "Contraseña incorrecta."
     return response_body, 401
+
+@api.route('/game-info/<int:game_id>', methods=['GET'])
+def get_game_info(game_id):
+    try:
+        game = Game.query.get(game_id)
+        if not game:
+            return jsonify({"error": "Juego no encontrado"}), 404
+
+        # Obtener géneros desde la relación intermedia
+        genres = [relation.genre.name for relation in game.genres]
+
+        # Construir la respuesta
+        game_info = {
+            "id": game.id,
+            "title": game.title,
+            "description": game.description,
+            "release_date": game.release_date.isoformat() if game.release_date else None,
+            "developer": game.developer,
+            "publisher": game.publisher,
+            "genres": genres,
+        }
+        return jsonify(game_info), 200
+    except Exception as e:
+        # Registro del error para depuración
+        print("Error en get_game_info:", traceback.format_exc())
+        return jsonify({"error": str(e)}), 500
+    
+@api.route('/game-images/<int:game_id>', methods=['GET'])
+def get_game_images(game_id):
+    try:
+        # Consulta para obtener imágenes relacionadas con el juego
+        images = Image.query.filter_by(game_id=game_id).all()
+
+        # Construir respuesta con la información de cada imagen
+        image_data = [
+            {
+                "url": image.url,
+                "caption": image.caption,
+                "user": image.user.username if image.user else None,  # Relación con la tabla de usuarios
+                "uploaded_at": image.uploaded_at.isoformat() if image.uploaded_at else None
+            }
+            for image in images
+        ]
+
+        return jsonify({"images": image_data}), 200
+    except Exception as e:
+        import traceback
+        print("Error en get_game_images:", traceback.format_exc())
+        return jsonify({"error": str(e)}), 500
 
